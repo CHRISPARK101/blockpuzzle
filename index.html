@@ -6,11 +6,48 @@
 <meta name="theme-color" content="#121827">
 <title>BLOCK PUZZLE</title>
 <style>
-:root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--gw:max(260px,min(calc(100vw - 20px),calc((100dvh - 285px)/1.28),540px));--cs:40px}
+:root{
+  color-scheme:dark;
+  box-sizing:border-box;
+  --sat:env(safe-area-inset-top,0px);
+  --sab:env(safe-area-inset-bottom,0px);
+  --sal:env(safe-area-inset-left,0px);
+  --sar:env(safe-area-inset-right,0px);
+  /* 세로: 화면 높이에 맞춰 보드 크기 확보 / 가로·작은화면 대응 */
+  --chrome:calc(210px + var(--sat) + var(--sab));
+  --gw:max(240px,min(calc(100vw - 16px - var(--sal) - var(--sar)),calc((100dvh - var(--chrome))/1.22),540px));
+  --cs:40px;
+  --gap:12px;
+  --pad-x:8px;
+}
 *{box-sizing:border-box}
-html{height:100%}
-body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 0%,#2a3550 0%,#161d30 45%,#0a0e1b 100%);color:#f2f5ff;font-family:system-ui,-apple-system,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR",sans-serif;overscroll-behavior:none;-webkit-user-select:none;user-select:none}
-.game{width:var(--gw);display:flex;flex-direction:column;gap:12px;padding:8px 0}
+html{height:100%;height:100dvh}
+body{
+  margin:0;
+  min-height:100%;
+  min-height:100dvh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:var(--sat) var(--sar) var(--sab) var(--sal);
+  background:radial-gradient(ellipse at 50% 0%,#2a3550 0%,#161d30 45%,#0a0e1b 100%);
+  color:#f2f5ff;
+  font-family:system-ui,-apple-system,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  overscroll-behavior:none;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.game{
+  width:var(--gw);
+  max-width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:var(--gap);
+  padding:var(--pad-x) 0;
+  margin:0 auto;
+}
 .top{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;position:relative}
 .stat{border-radius:16px;padding:7px 8px 8px;text-align:center;background:linear-gradient(180deg,#ffffff2e,#ffffff0e);border:1px solid #ffffff3a;box-shadow:inset 0 1px 0 #ffffff40,0 6px 14px #0006}
 .stat small{display:block;font-size:11px;font-weight:700;color:#c6cfe6;letter-spacing:.5px}
@@ -121,7 +158,7 @@ body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:ce
 .ghost{position:fixed;left:0;top:0;z-index:30;pointer-events:none;filter:drop-shadow(0 10px 10px #000a)}
 .hint{text-align:center;color:#aab4d0;font-size:12px;min-height:16px}
 .actions{display:flex;gap:10px}
-.actions button,.modal button{
+.actions button,.modal button,.modal-btns button{
   flex:1 1 0;
   min-width:0;
   border:1px solid #ffffff2a;
@@ -142,7 +179,7 @@ body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:ce
   position:relative;
   overflow:hidden;
 }
-.actions button::after,.modal button::after{
+.actions button::after,.modal button::after,.modal-btns button::after{
   content:"";
   position:absolute;
   inset:0;
@@ -150,8 +187,8 @@ body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:ce
   pointer-events:none;
   border-radius:inherit;
 }
-.actions button:hover,.modal button:hover{filter:brightness(1.08)}
-.actions button:active,.modal button:active{
+.actions button:hover,.modal button:hover,.modal-btns button:hover{filter:brightness(1.08)}
+.actions button:active,.modal button:active,.modal-btns button:active{
   transform:translateY(3px);
   box-shadow:
     inset 0 1px 0 #ffffff40,
@@ -159,16 +196,33 @@ body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:ce
     0 2px 0 #12192b,
     0 4px 10px #00000044;
 }
+.modal-btns{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+  flex-shrink:0;
+  width:100%;
+}
+.modal-btns button{
+  font-size:12.5px;
+  padding:12px 8px;
+  line-height:1.25;
+  white-space:normal;
+}
+.modal-btns button#m2{
+  background:linear-gradient(165deg,#4a5a80 0%,#2c3652 45%,#222b45 100%);
+}
+.modal-btns.single button{flex:1}
 #sound{font-size:17px;padding:10px 0}
 .overlay{position:fixed;inset:0;background:#070a14cc;display:none;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));z-index:50;box-sizing:border-box}
 .overlay.show{display:flex}
-.modal{width:min(100%,360px);max-height:min(88dvh,100%);padding:20px 20px 16px;border-radius:22px;background:linear-gradient(150deg,#3b475f,#171d2f);border:1px solid #ffffff3a;text-align:center;box-shadow:0 20px 60px #000b;box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column}
+.modal{width:min(100%,360px);max-height:min(88dvh,100%);padding:20px 20px 20px;border-radius:22px;background:linear-gradient(150deg,#3b475f,#171d2f);border:1px solid #ffffff3a;text-align:center;box-shadow:0 20px 60px #000b;box-sizing:border-box;overflow:visible;display:flex;flex-direction:column}
 .modal h2{margin:0 0 8px;font-size:26px;flex-shrink:0}.modal p{color:#cdd6ee;line-height:1.55;margin:0 0 6px}
 @media(prefers-reduced-motion:reduce){.pop::after,.clr::after,.stat.bump strong{animation-duration:.01s}}
 .modal .ni{width:100%;margin-top:10px;padding:11px;border-radius:12px;border:1px solid #ffffff44;background:#0d1322;color:#fff;font-size:16px;text-align:center;-webkit-user-select:text;user-select:text}
-.rank{max-height:min(88dvh,100%);display:flex;flex-direction:column;min-height:0}
+.rank{max-height:min(88dvh,100%);display:flex;flex-direction:column;min-height:0;overflow:hidden;padding-bottom:4px}
 .tabs{display:flex;gap:6px;margin:6px 0;flex-shrink:0}
-.tabs button{margin:0;padding:8px;box-shadow:none;background:#2c3652;opacity:.6}
+.tabs button{margin:0;padding:8px;box-shadow:none;background:#2c3652;opacity:.6;overflow:visible}
 .tabs button.on{opacity:1;background:linear-gradient(180deg,#5b6fa8,#34426b)}
 #rl{list-style:none;margin:6px 0;padding:0;overflow:auto;-webkit-overflow-scrolling:touch;flex:1 1 auto;min-height:0;max-height:none;text-align:left}
 #rl li{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;font-weight:700}
@@ -178,8 +232,23 @@ body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:ce
 #rl span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #rl em{font-style:normal;font-variant-numeric:tabular-nums}
 #rl li.dim{display:block;text-align:center;color:#aab4d0;font-weight:500;background:none}
-.note{font-size:11px;color:#8f9ab8;margin:8px 0 10px;flex-shrink:0}
-.rank #rclose{flex-shrink:0;margin-top:auto;width:100%}
+.note{font-size:11px;color:#8f9ab8;margin:8px 0 12px;flex-shrink:0;line-height:1.4}
+.rank #rclose{
+  flex-shrink:0;
+  margin-top:auto;
+  width:100%;
+  min-height:48px;
+  padding:12px 8px;
+  line-height:1.3;
+  font-size:15px;
+  overflow:visible;
+  /* 하단 그림자가 잘리지 않도록 그림자 축소 */
+  box-shadow:
+    inset 0 1px 0 #ffffff55,
+    inset 0 -1px 0 #1a2238,
+    0 3px 0 #12192b,
+    0 4px 10px #00000044;
+}
 .cell.glow::after{animation:gl .4s ease-in forwards}
 @keyframes gl{0%{filter:none}100%{transform:scale(1.06);filter:brightness(1.8) sepia(1) saturate(3) hue-rotate(-15deg);box-shadow:0 0 14px 4px #ffd45a,inset 0 0 12px #fff}}
 .cell.glow::before,.cell.clr::before{content:"";position:absolute;inset:-20%;border-radius:50%;background:radial-gradient(circle,#ffeeaacc,#ffb02044 50%,transparent 70%);mix-blend-mode:screen;pointer-events:none;z-index:3;will-change:transform,opacity}
@@ -195,6 +264,58 @@ body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:ce
 .slot.nx{pointer-events:none;filter:grayscale(1) brightness(.9)}
 .slot.nx .mini{--ms:calc(var(--cs)*.27)}
 .slot.nx:nth-child(4){border-left:1px dashed #ffffff33;border-radius:0}
+
+/* ===== 모바일 반응형 ===== */
+/* 좁은 화면 */
+@media (max-width:380px){
+  :root{--gap:8px;--pad-x:4px;--chrome:calc(190px + var(--sat) + var(--sab))}
+  .stat{padding:5px 6px 6px;border-radius:12px}
+  .stat small{font-size:10px}
+  .actions{gap:6px}
+  .actions button{font-size:12px;padding:10px 4px;border-radius:13px}
+  .modal{padding:16px 14px 12px;border-radius:18px}
+  .modal h2{font-size:22px}
+  .modal-btns{gap:6px}
+  .modal-btns button{font-size:11.5px;padding:11px 4px}
+  .hint{font-size:11px}
+  .tray{padding:6px;border-radius:16px}
+}
+/* 짧은 세로 화면 (SE, 가로모드에 가까운 높이) */
+@media (max-height:700px){
+  :root{--gap:8px;--chrome:calc(175px + var(--sat) + var(--sab))}
+  .brand svg{width:clamp(28px,7vw,40px);margin-bottom:-2px}
+  .brand h1{font-size:clamp(22px,7vw,36px)}
+  .brand p{font-size:clamp(14px,4.2vw,22px)}
+  .stat strong{font-size:clamp(16px,4.8vw,24px)}
+  .slot{height:calc(var(--cs)*1.45);min-height:40px}
+  .actions button{padding:9px 4px}
+  .hint{min-height:14px;font-size:11px}
+}
+/* 가로 모드 */
+@media (orientation:landscape) and (max-height:500px){
+  body{align-items:flex-start;overflow:auto}
+  :root{
+    --chrome:120px;
+    --gw:min(calc(100vw - 24px),calc((100dvh - 24px)*0.92),480px);
+    --gap:6px;
+  }
+  .game{padding:4px 0}
+  .top{gap:6px}
+  .brand svg{display:none}
+  .brand h1{font-size:clamp(18px,5vh,28px)}
+  .brand p{font-size:clamp(12px,3.5vh,18px)}
+  .slot{height:calc(var(--cs)*1.25);min-height:36px}
+  .actions button{padding:8px 4px;font-size:12px}
+  .frame{padding:5px;border-radius:14px}
+  .board{border-radius:10px}
+  .tray{padding:4px;border-radius:14px}
+  .hint{display:none}
+}
+/* 큰 태블릿/데스크톱에서도 터치 영역 유지 */
+@media (min-width:600px){
+  .actions button{min-height:48px}
+  .slot{min-height:56px}
+}
 </style>
 </head>
 <body>
@@ -214,8 +335,8 @@ body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:ce
   <div class="hint" id="hint"></div>
   <div class="actions"><button id="restart">↻ 새 게임</button><button id="rank">🏆 랭킹</button><button id="sound" aria-label="효과음 끄기">🔊</button></div>
 </main>
-<audio id="bgm" src="Late_Night_Alignment.mp3" loop preload="auto"></audio>
-<div class="overlay" id="overlay"><div class="modal"><h2 id="mt"></h2><p id="mx"></p><button id="mok"></button><button id="m2" style="display:none;background:linear-gradient(180deg,#3b4668,#222b45)"></button></div></div>
+<audio id="bgm" src="Late_Night_Alignment.mp3" loop preload="auto" playsinline webkit-playsinline></audio>
+<div class="overlay" id="overlay"><div class="modal"><h2 id="mt"></h2><p id="mx"></p><div class="modal-btns" id="mbtns"><button id="mok"></button><button id="m2" style="display:none"></button></div></div></div>
 <div class="overlay" id="rk"><div class="modal rank"><h2>🏆 랭킹</h2><div class="tabs"><button id="tw" class="on">이번 주</button><button id="ta">전체</button></div><ul id="rl"></ul><p class="note">주간 랭킹은 매주 월요일 0시(한국 시간)에 초기화됩니다.</p><button id="rclose">닫기</button></div></div>
 <script>
 (()=>{
@@ -247,7 +368,7 @@ async function reg(){const v=$('gn');if(v){nick=v.value.trim().slice(0,12);try{l
  if(rankOn()&&score>0){try{await rpc('block_submit_score',{p_id:pid,p_name:nick||'익명',p_score:score})}catch(e){}}}
 function gameOver(){over=true;const on=rankOn()&&score>0;
  showModal('게임 종료',`최종 점수: ${score.toLocaleString()}점<br>최고 기록: ${best.toLocaleString()}점`+(on?`<br><input id="gn" class="ni" maxlength="12" placeholder="닉네임 (랭킹 등록)" value="${esc(nick)}">`:''),
-  on?'등록하고 다시 시작':'다시 시작',async()=>{if(on)await reg();newGame()},on?'등록하고 랭킹 보기':null,async()=>{await reg();openRank()})}
+  on?'등록 후 재시작':'다시 시작',async()=>{if(on)await reg();newGame()},on?'랭킹 보기':null,async()=>{await reg();openRank()})}
 async function loadRank(){const ol=$('rl');
  if(!rankOn()){ol.innerHTML='<li class="dim">랭킹 서버가 아직 연결되지 않았습니다.<br>파일 위쪽의 SB_URL, SB_KEY를 입력해 주세요.</li>';return}
  ol.innerHTML='<li class="dim">불러오는 중…</li>';
@@ -263,12 +384,14 @@ const hint=t=>hintEl.textContent=t;
 const HINT0='블록을 끌어서 놓거나, 선택 후 보드 칸을 눌러 배치하세요.';
 function setCs(){
   // 프레임 내부 사용 가능 너비 기준으로 칸 크기 계산 (순환 참조 방지)
-  const frameW = frameEl.clientWidth - 16; // padding 8*2
+  const style = getComputedStyle(frameEl);
+  const padX = (parseFloat(style.paddingLeft)||0) + (parseFloat(style.paddingRight)||0);
+  const frameW = frameEl.clientWidth - padX;
   const gameW = document.querySelector('.game')?.clientWidth || frameW;
-  const avail = Math.max(0, Math.min(frameW, gameW));
+  const avail = Math.max(0, Math.min(frameW > 0 ? frameW : gameW, gameW));
   if(avail <= 0) return;
-  // 정수 픽셀로 맞춰 서브픽셀 깨짐 방지
-  const cs = Math.floor(avail / N);
+  // 정수 픽셀 + 최소 셀 크기 보장
+  const cs = Math.max(22, Math.floor(avail / N));
   document.documentElement.style.setProperty('--cs', cs + 'px');
 }
 let _roT = 0;
@@ -281,9 +404,39 @@ window.addEventListener('resize', ()=>{ clearTimeout(_roT); _roT = setTimeout(se
 window.addEventListener('orientationchange', ()=> setTimeout(setCs, 200));
 let ac;
 function beep(f,d,t='sine',v=.05){if(!sound)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();const o=ac.createOscillator(),g=ac.createGain(),n=ac.currentTime;o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(n+d)}catch(e){}}
-const SHAPE_COLOR=['cyan','cyan','cyan','blue','blue','green','red','red','orange','purple','purple','blue','blue','green','red','red'];
 // 블록 크기(칸 수) 기준으로 가중치를 주고, 점수가 오를수록 큰 블록 확률이 자연스럽게 올라감
 const PIECE_SIZE = SHAPES.map(s => s.length); // [1,2,2,3,3,4,4,4,4,4,4,4,4,6,6,6]
+// 최근 등장한 색을 기억해 같은 색이 뭉치지 않게 함
+const recentColors = [];
+function pickColor(){
+  // 최근 2개 색은 후보에서 제외(후보가 너무 줄어들면 1개만 제외)
+  const ban = new Set(recentColors.slice(-2));
+  let pool = COLORS.filter(c => !ban.has(c));
+  if(pool.length === 0) pool = COLORS.slice();
+  // 트레이/큐에 이미 있는 색도 가중치 낮춤
+  const inPlay = [];
+  if(typeof pieces !== 'undefined' && pieces) pieces.forEach(p => { if(p) inPlay.push(p.color); });
+  if(typeof queue !== 'undefined' && queue) queue.forEach(p => { if(p) inPlay.push(p.color); });
+  const counts = {};
+  COLORS.forEach(c => counts[c] = 0);
+  inPlay.forEach(c => { if(counts[c] !== undefined) counts[c]++; });
+  // 적게 쓰인 색일수록 높은 가중치
+  let total = 0;
+  const weights = pool.map(c => {
+    const w = 1 / (1 + (counts[c] || 0) * 2);
+    total += w;
+    return w;
+  });
+  let r = Math.random() * total;
+  let color = pool[0];
+  for(let i = 0; i < pool.length; i++){
+    r -= weights[i];
+    if(r <= 0){ color = pool[i]; break; }
+  }
+  recentColors.push(color);
+  if(recentColors.length > 8) recentColors.shift();
+  return color;
+}
 const randPiece=()=>{
   // 0점 → 작은 블록 위주, 점수가 오를수록 큰 블록 가중치 상승 (최대 약 10000점에서 포화)
   const t = Math.min(1, score / 10000);
@@ -301,12 +454,12 @@ const randPiece=()=>{
     if (r <= 0) break;
   }
   i = Math.min(i, SHAPES.length - 1);
-  return { shape: SHAPES[i].map(p => p.slice()), color: SHAPE_COLOR[i] };
+  return { shape: SHAPES[i].map(p => p.slice()), color: pickColor() };
 };
 const dims=s=>[Math.max(...s.map(p=>p[0]))+1,Math.max(...s.map(p=>p[1]))+1];
 function mk(p,ghost){const [h,w]=dims(p.shape),m=document.createElement('div');m.className='mini'+(ghost?' g':'');m.style.gridTemplateColumns=`repeat(${w},var(--ms))`;
  for(let r=0;r<h;r++)for(let c=0;c<w;c++){const x=document.createElement('div');x.className='mc '+(p.shape.some(([y,k])=>y===r&&k===c)?'c-'+p.color:'e');m.appendChild(x)}return m}
-function newGame(){over=false;queue=[];grid=Array.from({length:N},()=>Array(N).fill(null));score=0;selected=-1;combo=0;busy=false;pieces=takeBatch();hideModal();render();hint(HINT0);requestAnimationFrame(()=>{setCs();requestAnimationFrame(setCs)})}
+function newGame(){over=false;queue=[];recentColors.length=0;grid=Array.from({length:N},()=>Array(N).fill(null));score=0;selected=-1;combo=0;busy=false;pieces=takeBatch();hideModal();render();hint(HINT0);requestAnimationFrame(()=>{setCs();requestAnimationFrame(setCs)})}
 function render(){cells.forEach((el,i)=>el.className=cls(i));trayEl.innerHTML='';
  pieces.forEach((p,i)=>{const s=document.createElement('div');s.className='slot'+(p?'':' used')+(selected===i?' selected':'');
   if(p){s.appendChild(mk(p));s.addEventListener('pointerdown',e=>startDrag(e,i))}trayEl.appendChild(s)});
@@ -369,7 +522,13 @@ function finish(){
  if(fromR)swapAnim(fromR);bumpScore();busy=false;
  if(!hasMove())setTimeout(gameOver,500)}
 const hasMove=()=>pieces.some(p=>p&&(()=>{for(let r=0;r<N;r++)for(let c=0;c<N;c++)if(fits(p.shape,r,c))return true;return false})());
-function showModal(t,m,b,act,b2,act2){$('mt').textContent=t;$('mx').innerHTML=m;$('mok').textContent=b;modalAct=act;modalAct2=act2||null;const x=$('m2');x.style.display=b2?'':'none';x.textContent=b2||'';$('overlay').classList.add('show')}
+function showModal(t,m,b,act,b2,act2){
+  $('mt').textContent=t;$('mx').innerHTML=m;$('mok').textContent=b;modalAct=act;modalAct2=act2||null;
+  const x=$('m2'),row=$('mbtns');
+  x.style.display=b2?'':'none';x.textContent=b2||'';
+  if(row)row.classList.toggle('single',!b2);
+  $('overlay').classList.add('show');
+}
 function hideModal(){$('overlay').classList.remove('show')}
 function clearPv(){pvList.forEach(i=>cells[i].className=cls(i));pvList=[]}
 function showPv(p,r,c){clearPv();if(!fits(p.shape,r,c))return;p.shape.forEach(([y,x])=>{const i=(r+y)*N+c+x;cells[i].className=cls(i)+' pv c-'+p.color;pvList.push(i)})}
@@ -389,32 +548,44 @@ document.addEventListener('pointerup',e=>endDrag(e,false));
 document.addEventListener('pointercancel',e=>endDrag(e,true));
 boardEl.addEventListener('click',e=>{if(drag||Date.now()-lastDrop<400)return;const i=cells.indexOf(e.target.closest('.cell'));if(i<0)return;
  if(selected<0){hint('먼저 아래 블록 하나를 선택하세요.');return}place(selected,(i/N)|0,i%N)});
-$('restart').onclick=()=>newGame();
-$('m2').onclick=()=>{hideModal();if(modalAct2)modalAct2()};
-$('rank').onclick=openRank;$('tw').onclick=()=>setTab(true);$('ta').onclick=()=>setTab(false);
-$('rclose').onclick=()=>{$('rk').classList.remove('show');if(over)newGame()};
-$('mok').onclick=()=>{hideModal();if(modalAct)modalAct()};
 function startBgm(){
-  if(bgmStarted||!bgmEl||!sound)return;
-  bgmEl.play().then(()=>{bgmStarted=true}).catch(()=>{});
+  if(!bgmEl||!sound)return;
+  // iOS: 사용자 제스처 안에서 play() 호출 필요. 실패해도 다음 터치에서 재시도
+  const p = bgmEl.play();
+  if(p && p.then){
+    p.then(()=>{ bgmStarted=true; }).catch(()=>{ bgmStarted=false; });
+  } else {
+    bgmStarted = true;
+  }
+  // 효과음용 AudioContext도 함께 깨움
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    if(ac.state === 'suspended') ac.resume();
+  }catch(e){}
 }
 function setSoundUI(){
   const b=$('sound');
   b.textContent=sound?'🔊':'🔇';
   b.setAttribute('aria-label',sound?'효과음 끄기':'효과음 켜기');
   if(bgmEl){
-    if(sound){
-      if(bgmStarted)bgmEl.play().catch(()=>{});
-      else startBgm();
-    }else{
-      bgmEl.pause();
-    }
+    if(sound) startBgm();
+    else bgmEl.pause();
   }
 }
+$('restart').onclick=()=>{startBgm();newGame()};
+$('m2').onclick=()=>{hideModal();if(modalAct2)modalAct2()};
+$('rank').onclick=()=>{startBgm();openRank()};
+$('tw').onclick=()=>setTab(true);$('ta').onclick=()=>setTab(false);
+$('rclose').onclick=()=>{$('rk').classList.remove('show');if(over)newGame()};
+$('mok').onclick=()=>{hideModal();if(modalAct)modalAct()};
 $('sound').onclick=e=>{sound=!sound;setSoundUI()};
-// 첫 터치/클릭 시 배경음악 시작 (브라우저 자동재생 정책 대응)
-['pointerdown','keydown','touchstart'].forEach(ev=>{
-  document.addEventListener(ev,()=>{if(sound)startBgm()},{once:true,passive:true});
+// 첫 터치/클릭 시 배경음악 시작 (브라우저·iOS 자동재생 정책)
+function unlockAudio(){
+  if(!sound || bgmStarted) return;
+  startBgm();
+}
+['pointerdown','touchstart','click','keydown'].forEach(ev=>{
+  document.addEventListener(ev, unlockAudio, {passive:true});
 });
 newGame();
 })();
