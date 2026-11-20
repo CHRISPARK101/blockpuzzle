@@ -23,10 +23,33 @@ body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:ce
 .brand h1 i{font-style:normal}
 .brand p{margin:0;font-size:clamp(17px,5vw,27px);font-weight:900;letter-spacing:1px;color:#fff;-webkit-text-stroke:clamp(3px,.9vw,5px) #3a2a78;paint-order:stroke fill;text-shadow:0 3px 0 #1b0b3d}
 .gear{position:absolute;right:0;top:-6px;width:34px;height:34px;border-radius:11px;border:1px solid #ffffff38;background:#ffffff18;color:#dfe6fb;font-size:17px;cursor:pointer}
-.frame{position:relative;padding:8px;border-radius:22px;background:linear-gradient(150deg,#a9b4c8,#5b667c 40%,#3a4357 70%,#6c778c);box-shadow:0 12px 30px #000a,inset 0 1px 0 #ffffff80}
-.board{display:grid;grid-template-columns:repeat(8,1fr);aspect-ratio:1;background:#0f1525;border-radius:14px;overflow:hidden;box-shadow:inset 0 4px 14px #000c;touch-action:none}
-.cell{position:relative;border:1px solid #1f2940;min-width:0;min-height:0}
-.f::after,.pv::after{content:"";position:absolute;inset:3px;border-radius:9px;background:radial-gradient(circle at 28% 22%,#ffffff8c,#ffffff00 48%),var(--g);border:1px solid #ffffff55;box-shadow:inset 0 2px 1px #ffffff90,inset 0 -4px 5px #0005,0 2px 4px #0009}
+.frame{position:relative;padding:8px;border-radius:22px;background:linear-gradient(150deg,#a9b4c8,#5b667c 40%,#3a4357 70%,#6c778c);box-shadow:0 12px 30px #000a,inset 0 1px 0 #ffffff80;/* 보드는 JS(--cs)로 정사각 고정 */}
+.board{
+  display:grid;
+  grid-template-columns:repeat(8,var(--cs));
+  grid-template-rows:repeat(8,var(--cs));
+  width:calc(var(--cs)*8);
+  height:calc(var(--cs)*8);
+  max-width:100%;
+  margin:0 auto;
+  background:#0f1525;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:inset 0 4px 14px #000c;
+  touch-action:none;
+  contain:strict;
+  flex-shrink:0;
+}
+.cell{
+  position:relative;
+  width:var(--cs);
+  height:var(--cs);
+  border:1px solid #1f2940;
+  overflow:hidden;
+  /* transform 애니메이션이 레이아웃에 영향 주지 않도록 */
+  transform:translateZ(0);
+}
+.f::after,.pv::after{content:"";position:absolute;inset:3px;border-radius:9px;background:radial-gradient(circle at 28% 22%,#ffffff8c,#ffffff00 48%),var(--g);border:1px solid #ffffff55;box-shadow:inset 0 2px 1px #ffffff90,inset 0 -4px 5px #0005,0 2px 4px #0009;will-change:transform,opacity,filter}
 .pv::after{opacity:.5;box-shadow:none}
 .pop::after{animation:pop .38s cubic-bezier(.3,1.6,.5,1)}
 @keyframes pop{0%{transform:scale(.55);filter:brightness(2)}60%{transform:scale(1.18);filter:brightness(1.5)}100%{transform:scale(1);filter:none}}
@@ -45,14 +68,46 @@ body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:ce
 .ftxt{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);white-space:nowrap;font-size:clamp(26px,8vw,44px);font-weight:900;color:#ffe58a;-webkit-text-stroke:5px #6a3a00;paint-order:stroke fill;text-shadow:0 4px 0 #3d2000;animation:ft 1s ease-out forwards;text-align:center;line-height:1.05}
 .ftxt small{display:block;font-size:.55em}
 @keyframes ft{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-110%) scale(1)}}
-.tray{display:grid;grid-template-columns:1.3fr 1.3fr 1.3fr 1fr 1fr 1fr;padding:8px;border-radius:22px;background:linear-gradient(180deg,#ffffff26,#ffffff0c);border:1px solid #ffffff30;box-shadow:inset 0 1px 0 #ffffff30,0 8px 20px #0006}
-.slot{display:flex;align-items:center;justify-content:center;height:calc(var(--cs)*1.7);touch-action:none;cursor:grab;border-radius:14px}
+.tray{
+  display:grid;
+  grid-template-columns:1.3fr 1.3fr 1.3fr 1fr 1fr 1fr;
+  gap:0;
+  padding:8px;
+  border-radius:22px;
+  background:linear-gradient(180deg,#ffffff26,#ffffff0c);
+  border:1px solid #ffffff30;
+  box-shadow:inset 0 1px 0 #ffffff30,0 8px 20px #0006;
+  contain:layout style;
+}
+.slot{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:calc(var(--cs)*1.7);
+  min-height:48px;
+  touch-action:none;
+  cursor:grab;
+  border-radius:14px;
+}
 .slot.selected{background:#ffffff1c;box-shadow:inset 0 0 0 1px #ffffff55}
 .slot.used{opacity:.15;pointer-events:none}
 .slot.lift .mini{opacity:.25}
-.mini{display:grid;--ms:calc(var(--cs)*.35)}
+.mini{
+  display:grid;
+  --ms:calc(var(--cs)*.35);
+  grid-auto-rows:var(--ms);
+  gap:0;
+}
 .mini.g{--ms:var(--cs)}
-.mc{width:var(--ms);height:var(--ms);border:calc(var(--ms)*.07) solid transparent;border-radius:calc(var(--ms)*.24);background:radial-gradient(circle at 28% 22%,#ffffff80,#ffffff00 50%) padding-box,var(--g) padding-box;box-shadow:inset 0 2px 1px #ffffff90,inset 0 -3px 4px #0005}
+.mc{
+  width:var(--ms);
+  height:var(--ms);
+  border:calc(var(--ms)*.07) solid transparent;
+  border-radius:calc(var(--ms)*.24);
+  background:radial-gradient(circle at 28% 22%,#ffffff80,#ffffff00 50%) padding-box,var(--g) padding-box;
+  box-shadow:inset 0 2px 1px #ffffff90,inset 0 -3px 4px #0005;
+  box-sizing:border-box;
+}
 .mc.e{visibility:hidden}
 .ghost{position:fixed;left:0;top:0;z-index:30;pointer-events:none;filter:drop-shadow(0 10px 10px #000a)}
 .hint{text-align:center;color:#aab4d0;font-size:12px;min-height:16px}
@@ -117,7 +172,7 @@ body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:ce
 .note{font-size:11px;color:#8f9ab8;margin:0 0 4px}
 .cell.glow::after{animation:gl .4s ease-in forwards}
 @keyframes gl{0%{filter:none}100%{transform:scale(1.06);filter:brightness(1.8) sepia(1) saturate(3) hue-rotate(-15deg);box-shadow:0 0 14px 4px #ffd45a,inset 0 0 12px #fff}}
-.cell.glow::before,.cell.clr::before{content:"";position:absolute;inset:-35%;border-radius:50%;background:radial-gradient(circle,#ffeeaacc,#ffb02044 50%,transparent 70%);mix-blend-mode:screen;pointer-events:none;z-index:3}
+.cell.glow::before,.cell.clr::before{content:"";position:absolute;inset:-20%;border-radius:50%;background:radial-gradient(circle,#ffeeaacc,#ffb02044 50%,transparent 70%);mix-blend-mode:screen;pointer-events:none;z-index:3;will-change:transform,opacity}
 .cell.glow::before{animation:bloom .4s ease-in forwards}
 @keyframes bloom{0%{opacity:0;transform:scale(.4)}100%{opacity:1;transform:scale(1.2)}}
 .cell.clr::before{animation:bl2 .42s ease-in var(--d,0ms) both}
@@ -196,8 +251,24 @@ for(let i=0;i<N*N;i++){const d=document.createElement('div');d.className='cell';
 const cls=i=>{const v=grid[(i/N)|0][i%N];return 'cell'+(v?' f c-'+v:'')};
 const hint=t=>hintEl.textContent=t;
 const HINT0='블록을 끌어서 놓거나, 선택 후 보드 칸을 눌러 배치하세요.';
-function setCs(){document.documentElement.style.setProperty('--cs',boardEl.clientWidth/N+'px')}
-new ResizeObserver(setCs).observe(boardEl);
+function setCs(){
+  // 프레임 내부 사용 가능 너비 기준으로 칸 크기 계산 (순환 참조 방지)
+  const frameW = frameEl.clientWidth - 16; // padding 8*2
+  const gameW = document.querySelector('.game')?.clientWidth || frameW;
+  const avail = Math.max(0, Math.min(frameW, gameW));
+  if(avail <= 0) return;
+  // 정수 픽셀로 맞춰 서브픽셀 깨짐 방지
+  const cs = Math.floor(avail / N);
+  document.documentElement.style.setProperty('--cs', cs + 'px');
+}
+let _roT = 0;
+const _roTarget = frameEl.parentElement || document.body;
+new ResizeObserver(()=>{
+  clearTimeout(_roT);
+  _roT = setTimeout(setCs, 16);
+}).observe(_roTarget);
+window.addEventListener('resize', ()=>{ clearTimeout(_roT); _roT = setTimeout(setCs, 50); }, {passive:true});
+window.addEventListener('orientationchange', ()=> setTimeout(setCs, 200));
 let ac;
 function beep(f,d,t='sine',v=.05){if(!sound)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();const o=ac.createOscillator(),g=ac.createGain(),n=ac.currentTime;o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(n+d)}catch(e){}}
 const SHAPE_COLOR=['cyan','cyan','cyan','blue','blue','green','red','red','orange','purple','purple','blue','blue','green','red','red'];
@@ -225,7 +296,7 @@ const randPiece=()=>{
 const dims=s=>[Math.max(...s.map(p=>p[0]))+1,Math.max(...s.map(p=>p[1]))+1];
 function mk(p,ghost){const [h,w]=dims(p.shape),m=document.createElement('div');m.className='mini'+(ghost?' g':'');m.style.gridTemplateColumns=`repeat(${w},var(--ms))`;
  for(let r=0;r<h;r++)for(let c=0;c<w;c++){const x=document.createElement('div');x.className='mc '+(p.shape.some(([y,k])=>y===r&&k===c)?'c-'+p.color:'e');m.appendChild(x)}return m}
-function newGame(){over=false;queue=[];grid=Array.from({length:N},()=>Array(N).fill(null));score=0;selected=-1;combo=0;busy=false;pieces=takeBatch();hideModal();render();hint(HINT0);setCs()}
+function newGame(){over=false;queue=[];grid=Array.from({length:N},()=>Array(N).fill(null));score=0;selected=-1;combo=0;busy=false;pieces=takeBatch();hideModal();render();hint(HINT0);requestAnimationFrame(()=>{setCs();requestAnimationFrame(setCs)})}
 function render(){cells.forEach((el,i)=>el.className=cls(i));trayEl.innerHTML='';
  pieces.forEach((p,i)=>{const s=document.createElement('div');s.className='slot'+(p?'':' used')+(selected===i?' selected':'');
   if(p){s.appendChild(mk(p));s.addEventListener('pointerdown',e=>startDrag(e,i))}trayEl.appendChild(s)});
@@ -284,7 +355,8 @@ function place(i,r,c){
 function finish(){
  if(score>best){best=score;try{localStorage.setItem('blockPuzzleBest',best)}catch(e){}}
  let fromR=null;if(pieces.every(x=>!x)){fromR=[...trayEl.querySelectorAll('.slot.nx .mini')].map(e=>e.getBoundingClientRect());pieces=takeBatch()}
- render();if(fromR)swapAnim(fromR);bumpScore();busy=false;
+ render();
+ if(fromR)swapAnim(fromR);bumpScore();busy=false;
  if(!hasMove())setTimeout(gameOver,500)}
 const hasMove=()=>pieces.some(p=>p&&(()=>{for(let r=0;r<N;r++)for(let c=0;c<N;c++)if(fits(p.shape,r,c))return true;return false})());
 function showModal(t,m,b,act,b2,act2){$('mt').textContent=t;$('mx').innerHTML=m;$('mok').textContent=b;modalAct=act;modalAct2=act2||null;const x=$('m2');x.style.display=b2?'':'none';x.textContent=b2||'';$('overlay').classList.add('show')}
