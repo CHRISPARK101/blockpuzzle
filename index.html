@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#121827">
 <title>BLOCK PUZZLE</title>
 <style>
-:root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--gw:max(260px,min(calc(100vw - 20px),calc((100dvh - 290px)/1.33),540px));--cs:40px}
+:root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--gw:max(260px,min(calc(100vw - 20px),calc((100dvh - 285px)/1.28),540px));--cs:40px}
 *{box-sizing:border-box}
 html{height:100%}
 body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 0%,#2a3550 0%,#161d30 45%,#0a0e1b 100%);color:#f2f5ff;font-family:system-ui,-apple-system,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR",sans-serif;overscroll-behavior:none;-webkit-user-select:none;user-select:none}
@@ -45,20 +45,57 @@ body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:ce
 .ftxt{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);white-space:nowrap;font-size:clamp(26px,8vw,44px);font-weight:900;color:#ffe58a;-webkit-text-stroke:5px #6a3a00;paint-order:stroke fill;text-shadow:0 4px 0 #3d2000;animation:ft 1s ease-out forwards;text-align:center;line-height:1.05}
 .ftxt small{display:block;font-size:.55em}
 @keyframes ft{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-110%) scale(1)}}
-.tray{display:grid;grid-template-columns:repeat(3,1fr);padding:8px;border-radius:22px;background:linear-gradient(180deg,#ffffff26,#ffffff0c);border:1px solid #ffffff30;box-shadow:inset 0 1px 0 #ffffff30,0 8px 20px #0006}
-.slot{display:flex;align-items:center;justify-content:center;height:calc(var(--cs)*2.6);touch-action:none;cursor:grab;border-radius:14px}
+.tray{display:grid;grid-template-columns:1.3fr 1.3fr 1.3fr 1fr 1fr 1fr;padding:8px;border-radius:22px;background:linear-gradient(180deg,#ffffff26,#ffffff0c);border:1px solid #ffffff30;box-shadow:inset 0 1px 0 #ffffff30,0 8px 20px #0006}
+.slot{display:flex;align-items:center;justify-content:center;height:calc(var(--cs)*1.7);touch-action:none;cursor:grab;border-radius:14px}
 .slot.selected{background:#ffffff1c;box-shadow:inset 0 0 0 1px #ffffff55}
 .slot.used{opacity:.15;pointer-events:none}
 .slot.lift .mini{opacity:.25}
-.mini{display:grid;--ms:calc(var(--cs)*.6)}
+.mini{display:grid;--ms:calc(var(--cs)*.35)}
 .mini.g{--ms:var(--cs)}
 .mc{width:var(--ms);height:var(--ms);border:calc(var(--ms)*.07) solid transparent;border-radius:calc(var(--ms)*.24);background:radial-gradient(circle at 28% 22%,#ffffff80,#ffffff00 50%) padding-box,var(--g) padding-box;box-shadow:inset 0 2px 1px #ffffff90,inset 0 -3px 4px #0005}
 .mc.e{visibility:hidden}
 .ghost{position:fixed;left:0;top:0;z-index:30;pointer-events:none;filter:drop-shadow(0 10px 10px #000a)}
 .hint{text-align:center;color:#aab4d0;font-size:12px;min-height:16px}
-.actions{display:flex;gap:8px}
-.actions button,.modal button{flex:1;border:1px solid #ffffff3a;border-radius:13px;padding:11px 8px;color:#fff;font-weight:800;font-size:14px;background:linear-gradient(180deg,#4a5a80,#2c3652);box-shadow:0 4px 0 #111827;cursor:pointer}
-.actions button:active,.modal button:active{transform:translateY(2px);box-shadow:0 2px 0 #111827}
+.actions{display:flex;gap:10px}
+.actions button,.modal button{
+  flex:1 1 0;
+  min-width:0;
+  border:1px solid #ffffff2a;
+  border-radius:16px;
+  padding:12px 6px;
+  color:#f4f7ff;
+  font-weight:800;
+  font-size:13.5px;
+  letter-spacing:.2px;
+  background:linear-gradient(165deg,#5a6d9a 0%,#3a4668 45%,#2a334d 100%);
+  box-shadow:
+    inset 0 1px 0 #ffffff55,
+    inset 0 -2px 0 #1a2238,
+    0 5px 0 #12192b,
+    0 8px 18px #00000055;
+  cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease, filter .15s ease;
+  position:relative;
+  overflow:hidden;
+}
+.actions button::after,.modal button::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,#ffffff18 0%,transparent 45%);
+  pointer-events:none;
+  border-radius:inherit;
+}
+.actions button:hover,.modal button:hover{filter:brightness(1.08)}
+.actions button:active,.modal button:active{
+  transform:translateY(3px);
+  box-shadow:
+    inset 0 1px 0 #ffffff40,
+    inset 0 -1px 0 #1a2238,
+    0 2px 0 #12192b,
+    0 4px 10px #00000044;
+}
+#sound{font-size:17px;padding:10px 0}
 .overlay{position:fixed;inset:0;background:#070a14cc;display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
 .overlay.show{display:flex}
 .modal{width:min(100%,360px);padding:24px;border-radius:22px;background:linear-gradient(150deg,#3b475f,#171d2f);border:1px solid #ffffff3a;text-align:center;box-shadow:0 20px 60px #000b}
@@ -86,6 +123,13 @@ body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:ce
 .cell.clr::before{animation:bl2 .42s ease-in var(--d,0ms) both}
 @keyframes bl2{0%{opacity:1;transform:scale(1.2)}100%{opacity:0;transform:scale(2.4)}}
 .c-red{--gl:#ff3b4aaa}.c-blue{--gl:#3d8bffaa}.c-green{--gl:#7be035aa}.c-orange{--gl:#ff9a2aaa}.c-purple{--gl:#b05cffaa}.c-cyan{--gl:#38d6ffaa}
+.next{display:flex;align-items:center;justify-content:center;gap:16px;height:calc(var(--cs)*1.35);border-radius:16px;background:linear-gradient(180deg,#ffffff14,#ffffff06);border:1px solid #ffffff22}
+.next small{font-size:11px;font-weight:800;color:#aab4d0;letter-spacing:1px}
+#nx{display:flex;gap:20px;align-items:center}
+.next .mini{--ms:calc(var(--cs)*.28);opacity:.9}
+.slot.nx{pointer-events:none;filter:grayscale(1) brightness(.9)}
+.slot.nx .mini{--ms:calc(var(--cs)*.27)}
+.slot.nx:nth-child(4){border-left:1px dashed #ffffff33;border-radius:0}
 </style>
 </head>
 <body>
@@ -98,13 +142,14 @@ body{margin:0;min-height:100%;display:flex;align-items:center;justify-content:ce
       <p>PUZZLE</p>
     </div>
     <div class="stat"><small>SCORE</small><strong id="score">0</strong></div>
-    <button class="gear" id="help" aria-label="게임 방법">⚙</button>
+    
   </header>
   <section class="frame" id="frame"><div class="board" id="board" aria-label="8 곱하기 8 게임 보드"></div><div class="fx" id="fx"></div></section>
   <section class="tray" id="tray" aria-label="사용할 블록"></section>
   <div class="hint" id="hint"></div>
-  <div class="actions"><button id="restart">↻ 새 게임</button><button id="rank">🏆 랭킹</button><button id="sound">♪ 효과음 켜짐</button></div>
+  <div class="actions"><button id="restart">↻ 새 게임</button><button id="rank">🏆 랭킹</button><button id="sound" aria-label="효과음 끄기">🔊</button></div>
 </main>
+<audio id="bgm" src="Late_Night_Alignment.mp3" loop preload="auto"></audio>
 <div class="overlay" id="overlay"><div class="modal"><h2 id="mt"></h2><p id="mx"></p><button id="mok"></button><button id="m2" style="display:none;background:linear-gradient(180deg,#3b4668,#222b45)"></button></div></div>
 <div class="overlay" id="rk"><div class="modal rank"><h2>🏆 랭킹</h2><div class="tabs"><button id="tw" class="on">이번 주</button><button id="ta">전체</button></div><ul id="rl"></ul><p class="note">주간 랭킹은 매주 월요일 0시(한국 시간)에 초기화됩니다.</p><button id="rclose">닫기</button></div></div>
 <script>
@@ -121,12 +166,15 @@ const SHAPES=[
 ];
 const $=id=>document.getElementById(id);
 const boardEl=$('board'),trayEl=$('tray'),fxEl=$('fx'),frameEl=$('frame'),scoreEl=$('score'),bestEl=$('best'),hintEl=$('hint');
-let grid,score,best=0,pieces,selected=-1,sound=true,drag=null,busy=false,combo=0,lastDrop=0,pvList=[],modalAct=null;
+let grid,score,best=0,pieces,selected=-1,sound=true,drag=null,busy=false,combo=0,lastDrop=0,pvList=[],modalAct=null,bgmStarted=false;
+const bgmEl=$('bgm');
+if(bgmEl){bgmEl.volume=0.35}
 try{best=Number(localStorage.getItem('blockPuzzleBest'))||0}catch(e){}
 // ===== Supabase 설정: 아래 두 값을 본인 프로젝트 값으로 바꾸세요 =====
 const SB_URL='https://reezmzkrzixjsfnuyerz.supabase.co',SB_KEY='sb_publishable_U5wG6wIbPQMDgu2OPh-tiA_ltIiXxX-';
 const rankOn=()=>!SB_URL.includes('YOUR-PROJECT');
-let modalAct2=null,over=false,rkWeekly=true,nick='',pid='';
+let modalAct2=null,over=false,rkWeekly=true,nick='',pid='',queue=[];
+function takeBatch(){while(queue.length<5)queue.push(randPiece());const b=queue.splice(0,3);while(queue.length<5)queue.push(randPiece());return b}
 try{nick=localStorage.getItem('blockPuzzleNick')||'';pid=localStorage.getItem('blockPuzzlePid')||'';if(!pid){pid=(crypto.randomUUID?crypto.randomUUID():'p'+Date.now()+Math.random().toString(36).slice(2));localStorage.setItem('blockPuzzlePid',pid)}}catch(e){pid=pid||'p'+Date.now()+Math.random().toString(36).slice(2)}
 const esc=t=>t.replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';');
 async function rpc(fn,body){const r=await fetch(SB_URL+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);const t=await r.text();return t?JSON.parse(t):null}
@@ -153,20 +201,48 @@ new ResizeObserver(setCs).observe(boardEl);
 let ac;
 function beep(f,d,t='sine',v=.05){if(!sound)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();const o=ac.createOscillator(),g=ac.createGain(),n=ac.currentTime;o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(n+d)}catch(e){}}
 const SHAPE_COLOR=['cyan','cyan','cyan','blue','blue','green','red','red','orange','purple','purple','blue','blue','green','red','red'];
-const randPiece=()=>{const i=Math.floor(Math.random()*SHAPES.length);return{shape:SHAPES[i].map(p=>p.slice()),color:SHAPE_COLOR[i]}};
+// 블록 크기(칸 수) 기준으로 가중치를 주고, 점수가 오를수록 큰 블록 확률이 자연스럽게 올라감
+const PIECE_SIZE = SHAPES.map(s => s.length); // [1,2,2,3,3,4,4,4,4,4,4,4,4,6,6,6]
+const randPiece=()=>{
+  // 0점 → 작은 블록 위주, 점수가 오를수록 큰 블록 가중치 상승 (최대 약 10000점에서 포화)
+  const t = Math.min(1, score / 10000);
+  const bias = 0.35 + t * 1.4;   // 크기 지수: 초반 0.35(작은쪽 선호) → 후반 1.75(큰쪽 선호)
+  let total = 0;
+  const weights = PIECE_SIZE.map(sz => {
+    const w = Math.pow(sz, bias);
+    total += w;
+    return w;
+  });
+  let r = Math.random() * total;
+  let i = 0;
+  for (; i < weights.length; i++) {
+    r -= weights[i];
+    if (r <= 0) break;
+  }
+  i = Math.min(i, SHAPES.length - 1);
+  return { shape: SHAPES[i].map(p => p.slice()), color: SHAPE_COLOR[i] };
+};
 const dims=s=>[Math.max(...s.map(p=>p[0]))+1,Math.max(...s.map(p=>p[1]))+1];
 function mk(p,ghost){const [h,w]=dims(p.shape),m=document.createElement('div');m.className='mini'+(ghost?' g':'');m.style.gridTemplateColumns=`repeat(${w},var(--ms))`;
  for(let r=0;r<h;r++)for(let c=0;c<w;c++){const x=document.createElement('div');x.className='mc '+(p.shape.some(([y,k])=>y===r&&k===c)?'c-'+p.color:'e');m.appendChild(x)}return m}
-function newGame(){over=false;grid=Array.from({length:N},()=>Array(N).fill(null));score=0;selected=-1;combo=0;busy=false;pieces=[randPiece(),randPiece(),randPiece()];hideModal();render();hint(HINT0);setCs()}
+function newGame(){over=false;queue=[];grid=Array.from({length:N},()=>Array(N).fill(null));score=0;selected=-1;combo=0;busy=false;pieces=takeBatch();hideModal();render();hint(HINT0);setCs()}
 function render(){cells.forEach((el,i)=>el.className=cls(i));trayEl.innerHTML='';
  pieces.forEach((p,i)=>{const s=document.createElement('div');s.className='slot'+(p?'':' used')+(selected===i?' selected':'');
   if(p){s.appendChild(mk(p));s.addEventListener('pointerdown',e=>startDrag(e,i))}trayEl.appendChild(s)});
- scoreEl.textContent=score.toLocaleString();bestEl.textContent=best.toLocaleString()}
+ queue.slice(0,3).forEach(q=>{const s=document.createElement('div');s.className='slot nx';s.appendChild(mk(q));trayEl.appendChild(s)});
+ scoreEl.textContent=score.toLocaleString();bestEl.textContent=best.toLocaleString();}
 function selectPiece(i){if(busy||!pieces[i])return;selected=selected===i?-1:i;hint(selected<0?HINT0:'놓을 위치(블록의 왼쪽 위 칸)를 눌러주세요.');render()}
 const fits=(sh,r,c)=>sh.every(([y,x])=>r+y>=0&&r+y<N&&c+x>=0&&c+x<N&&!grid[r+y][c+x]);
 function bumpScore(){const s=scoreEl.parentNode;s.classList.remove('bump');void s.offsetWidth;s.classList.add('bump')}
 function floatText(html){const d=document.createElement('div');d.className='ftxt';d.innerHTML=html;fxEl.appendChild(d);setTimeout(()=>d.remove(),1050)}
 function charge(){if(!sound)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();const o=ac.createOscillator(),g=ac.createGain(),n=ac.currentTime;o.type='sawtooth';o.frequency.setValueAtTime(180,n);o.frequency.exponentialRampToValueAtTime(900,n+.4);g.gain.setValueAtTime(.015,n);g.gain.linearRampToValueAtTime(.04,n+.38);g.gain.linearRampToValueAtTime(.0001,n+.42);o.connect(g);g.connect(ac.destination);o.start();o.stop(n+.43)}catch(e){}}
+function swapAnim(from){
+ trayEl.querySelectorAll('.slot:not(.nx) .mini').forEach((m,i)=>{const f=from[i];if(!f)return;const t=m.getBoundingClientRect();
+  const dx=f.left+f.width/2-(t.left+t.width/2),dy=f.top+f.height/2-(t.top+t.height/2),sc=f.width/t.width;
+  m.style.position='relative';m.style.zIndex=5;
+  m.animate([{transform:`translate(${dx}px,${dy}px) scale(${sc})`,filter:'grayscale(1) brightness(.9)'},{transform:'translate(0,0) scale(1)',filter:'grayscale(0) brightness(1)'}],{duration:560,delay:i*80,easing:'cubic-bezier(.2,.9,.3,1.15)',fill:'backwards'})});
+ trayEl.querySelectorAll('.slot.nx .mini').forEach((m,i)=>m.animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:350,delay:350+i*80,fill:'backwards'}));
+ beep(520,.12,'triangle',.03)}
 function punch(l,c){frameEl.animate([{scale:1},{scale:1.03+Math.min(.04,(l+c)*.008)},{scale:.99},{scale:1}],{duration:340,easing:'ease-out'});if(l>1||c>1){const f=document.createElement('div');f.className='bigflash';document.body.appendChild(f);setTimeout(()=>f.remove(),400)}}
 function beam(h,i){const cs=boardEl.clientWidth/N,b=document.createElement('div'),g=document.createElement('div');b.style.cssText=`position:absolute;overflow:hidden;left:${8+(h?0:i*cs)}px;top:${8+(h?i*cs:0)}px;width:${h?cs*N:cs}px;height:${h?cs:cs*N}px`;g.style.cssText=`position:absolute;left:0;top:0;background:linear-gradient(${h?90:180}deg,transparent,#ffd45a 35%,#fff6c8 50%,#ffd45a 65%,transparent);width:${h?'45%':'100%'};height:${h?'100%':'45%'}`;b.appendChild(g);fxEl.appendChild(b);g.animate([{transform:h?'translateX(-100%)':'translateY(-100%)'},{transform:h?'translateX(230%)':'translateY(230%)'}],{duration:450,easing:'ease-in'}).onfinish=()=>b.remove()}
 function shake(l,c){const p=Math.min(14,4+l*3+c*2);frameEl.animate([{transform:'translate(0,0)'},{transform:`translate(${-p}px,${p/2}px) rotate(-.4deg)`},{transform:`translate(${p}px,${-p/2}px) rotate(.4deg)`},{transform:`translate(${-p/2}px,0)`},{transform:'translate(0,0)'}],{duration:380,easing:'ease-out'});const f=document.createElement('div');f.className='flash';fxEl.appendChild(f);setTimeout(()=>f.remove(),500)}
@@ -207,8 +283,8 @@ function place(i,r,c){
  return true}
 function finish(){
  if(score>best){best=score;try{localStorage.setItem('blockPuzzleBest',best)}catch(e){}}
- if(pieces.every(x=>!x))pieces=[randPiece(),randPiece(),randPiece()];
- render();bumpScore();busy=false;
+ let fromR=null;if(pieces.every(x=>!x)){fromR=[...trayEl.querySelectorAll('.slot.nx .mini')].map(e=>e.getBoundingClientRect());pieces=takeBatch()}
+ render();if(fromR)swapAnim(fromR);bumpScore();busy=false;
  if(!hasMove())setTimeout(gameOver,500)}
 const hasMove=()=>pieces.some(p=>p&&(()=>{for(let r=0;r<N;r++)for(let c=0;c<N;c++)if(fits(p.shape,r,c))return true;return false})());
 function showModal(t,m,b,act,b2,act2){$('mt').textContent=t;$('mx').innerHTML=m;$('mok').textContent=b;modalAct=act;modalAct2=act2||null;const x=$('m2');x.style.display=b2?'':'none';x.textContent=b2||'';$('overlay').classList.add('show')}
@@ -236,8 +312,28 @@ $('m2').onclick=()=>{hideModal();if(modalAct2)modalAct2()};
 $('rank').onclick=openRank;$('tw').onclick=()=>setTab(true);$('ta').onclick=()=>setTab(false);
 $('rclose').onclick=()=>{$('rk').classList.remove('show');if(over)newGame()};
 $('mok').onclick=()=>{hideModal();if(modalAct)modalAct()};
-$('help').onclick=()=>showModal('게임 방법','아래 블록을 끌어서 보드에 놓으세요. 탭으로 선택한 뒤 칸을 눌러도 됩니다.<br><br>가로 또는 세로 한 줄을 빈칸 없이 채우면 줄이 사라집니다.<br>연속으로 줄을 지우면 콤보 배율이 올라갑니다.<br>놓을 곳이 없으면 게임이 끝납니다.','닫기',null);
-$('sound').onclick=e=>{sound=!sound;e.currentTarget.textContent=sound?'♪ 효과음 켜짐':'♪ 효과음 꺼짐'};
+function startBgm(){
+  if(bgmStarted||!bgmEl||!sound)return;
+  bgmEl.play().then(()=>{bgmStarted=true}).catch(()=>{});
+}
+function setSoundUI(){
+  const b=$('sound');
+  b.textContent=sound?'🔊':'🔇';
+  b.setAttribute('aria-label',sound?'효과음 끄기':'효과음 켜기');
+  if(bgmEl){
+    if(sound){
+      if(bgmStarted)bgmEl.play().catch(()=>{});
+      else startBgm();
+    }else{
+      bgmEl.pause();
+    }
+  }
+}
+$('sound').onclick=e=>{sound=!sound;setSoundUI()};
+// 첫 터치/클릭 시 배경음악 시작 (브라우저 자동재생 정책 대응)
+['pointerdown','keydown','touchstart'].forEach(ev=>{
+  document.addEventListener(ev,()=>{if(sound)startBgm()},{once:true,passive:true});
+});
 newGame();
 })();
 </script>
